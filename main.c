@@ -425,7 +425,7 @@ void login(int* errorcache){
             {
                 if(passvalid==0)
                 {
-                    printf("You entered a wrong password!\n");
+                    printf("Incorrect password!\n");
                     printf("|press enter to continue...\n");
                     fflush(stdin);
                     fgets(enter,2,stdin);
