@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <windows.h>
 
 
 void createAcc(char* username);
@@ -11,15 +12,6 @@ int main() {
     printf("Value outside func. for username:%s\n",username);
 
 
-
-
-
-
-
-
-
-
-
     return 0;
 }
 
@@ -28,13 +20,13 @@ void createAcc(char* username)
     FILE* Filepointer;
     int length;
     char buffer;
+    char enter[2];
 
     //----------TAKE INPUT----------------
     int found=1;
     while (found==1 ) {
 
-
-        printf("%s\n", username);
+        system("cls");
         printf("Enter your username it should be less than 9 letters and it cant have any space in it...\n");
         scanf("%s", username);
 
@@ -44,7 +36,7 @@ void createAcc(char* username)
         //----------------CALC LENGTH----------------
 
         for (length = 0; username[length] != '\0'; ++length)
-            printf("length: %d\n", length);
+            //printf("length: %d\n", length); //debug
 
         //#################################################
 
@@ -62,16 +54,19 @@ void createAcc(char* username)
             while (found != 1 && buffer!=EOF) {
 
                 buffer = fgetc(Filepointer);
-                printf("BUFFER=> %d\n\n", buffer);
-                printf("COUNTER=> %d\n\n", username[counter]);
+                //printf("BUFFER=> %d\n\n", buffer);  //debug
+                //printf("COUNTER=> %d\n\n", username[counter]);    //debug
 
 
                 if (buffer == username[counter] || (buffer == '\n' && username[counter] == '\0')) {
                     check = 1;
-                    printf("if'in içi\n\n");
+                    //printf("if'in içi\n\n"); //debug
                     if (buffer == '\n') {
                         found = 1;
-                        printf("We found the username which we're lookin for!\n");
+                        printf("This username already exists please enter a different one!\n");
+                        printf("|press enter to continue...");
+                        fflush(stdin);
+                        fgets(enter,2,stdin);
                     }
 
                 } else {
@@ -84,15 +79,15 @@ void createAcc(char* username)
                 if (check == 0) {
                     while (buffer != '\n' && buffer != EOF) {
                         buffer = fgetc(Filepointer);
-                        printf("buffer in while: %c\n", buffer);
+                        //printf("buffer in while: %c\n", buffer); //debug
                     }
                     counter = 0;
                 }
 
 
-                //printf("devam etmek icin bir deger gir");
-                //int temp;
-                //scanf("%d", &temp);
+                //printf("enter a value to cont."); // debug
+                //int temp; //debug
+                //scanf("%d", &temp); //debug
 
             }
 
