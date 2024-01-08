@@ -13,42 +13,38 @@ int main() {
     char enter[2];
     char choice;
 
+    while(choice!='0') {
+        system("cls");
+        printf("Type what you want to do?\n");
+        printf("1)Create an account\n"
+               "2)Login to your account\n"
+               "3)Admin panel\n");
+        fflush(stdin);
+        scanf("%c", &choice);
 
-    printf("Type what you want to do?\n");
-    printf("1)Create an account\n"
-           "2)Login to your account\n"
-           "3)Admin panel\n");
-    fflush(stdin);
-    scanf("%c",&choice);
+        if (choice == '1') {
+            createAcc(&errorcache);
 
-    if(choice=='1')
-    {
-        createAcc(&errorcache);
+            if (errorcache != 0) {
+                printf("###ERROR CODE:%d\n", errorcache);
+            }
 
-        if(errorcache!=0)
-        {
-            printf("###ERROR CODE:%d\n",errorcache);
+        } else if (choice == '2') {
+
+
+            login(&errorcache);
+            if (errorcache != 0) {
+                printf("###ERROR CODE:%d\n", errorcache);
+            }
+
+
         }
 
+
+        printf("|Press enter to continue...");
+        fflush(stdin);
+        fgets(enter, 2, stdin);
     }
-    else if(choice=='2')
-    {
-
-
-        login(&errorcache);
-        if(errorcache!=0)
-        {
-            printf("###ERROR CODE:%d\n",errorcache);
-        }
-
-
-    }
-
-
-
-    printf("Press enter to continue...");
-    fflush(stdin);
-    fgets(enter,2,stdin);
 
 
     return 0;
@@ -97,7 +93,7 @@ void createAcc(int* errorcache)
                 buffer = fgetc(Filepointer);
                 if(buffer=='\n')
                 {
-                    printf("First ROW detected!\n");
+                    //printf("First ROW detected!\n");
                 }
                 else
                 {
@@ -255,6 +251,8 @@ void createAcc(int* errorcache)
 
 void login(int* errorcache){
 
+    int passvalid=0;
+    int unamevalid=0;
     char username[10];
     char password[10];
     char storedpass[10]="";
@@ -265,168 +263,175 @@ void login(int* errorcache){
     char enter[2];
 
     int found = 0;
+        while(unamevalid!=1 || passvalid!=1) {
+            passvalid=0;
+            unamevalid=0;
+            fflush(stdin);
+            system("cls");
+            printf("Enter your username...\n");
+            scanf("%s", username);
 
-    fflush(stdin);
-        system("cls");
-        printf("Enter your username...\n");
-        scanf("%s", username);
-
-        //#######################################
+            //#######################################
 
 
-        //----------------CALC LENGTH----------------
+            //----------------CALC LENGTH----------------
 
-        for (lengthofuser = 0; username[lengthofuser] != '\0'; ++lengthofuser)
-        {
-        //printf("lengthofuser: %d\n", lengthofuser); //debug
-        }
-
-        //#################################################
-
-        //------------------CHECK IF THAT USERNAME ALREADY EXISTS-----------------
-
-        Filepointer = fopen("accounts.txt", "r");
-        if (Filepointer == NULL){
-            printf("ERROR 13\n");
-        }
-        else {
-
-            int counter = 0;
-            found = 0;
-            int check = 0;
-            buffer = fgetc(Filepointer);
-            if(buffer=='\n')
-            {
-                //printf("First ROW detected!\n");
+            for (lengthofuser = 0; username[lengthofuser] != '\0'; ++lengthofuser) {
+                //printf("lengthofuser: %d\n", lengthofuser); //debug
             }
-            else
-            {
-                printf("NO FIRST ROW DETECTION! EXITING THE PROGRAM!\n");
-                fclose(Filepointer);
-                *errorcache=111;
 
-                return;
+            //#################################################
 
-            }
-            while (found != 1 && buffer!=EOF) {
+            //------------------CHECK IF THAT USERNAME ALREADY EXISTS-----------------
 
+            Filepointer = fopen("accounts.txt", "r");
+            if (Filepointer == NULL) {
+                printf("ERROR 13\n");
+            } else {
+
+                int counter = 0;
+                found = 0;
+                int check = 0;
                 buffer = fgetc(Filepointer);
-                //printf("BUFFER=> %d\n\n", buffer);  //debug
-                //printf("USERNAME=> %d\n\n", username[counter]);    //debug
-                //printf("COUNTER VALUE=> %d\n\n",counter);
+                if (buffer == '\n') {
+                    //printf("First ROW detected!\n");
+                } else {
+                    printf("NO FIRST ROW DETECTION! EXITING THE PROGRAM!\n");
+                    fclose(Filepointer);
+                    *errorcache = 111;
+
+                    return;
+
+                }
+                while (found != 1 && buffer != EOF) {
+
+                    buffer = fgetc(Filepointer);
+                    //printf("BUFFER=> %d\n\n", buffer);  //debug
+                    //printf("USERNAME=> %d\n\n", username[counter]);    //debug
+                    //printf("COUNTER VALUE=> %d\n\n",counter);
 
 
-                if (buffer == username[counter] || (buffer == '|' && username[counter] == '\0')) {
-                    check = 1;
-                    //printf("if'in içi\n\n"); //debug
-                    //printf("BUFFER:%c\n",buffer);
-                    if (buffer == '|') {
-                        found = 1;
-                        //printf("This username already exists please enter a different one!\n");
+                    if (buffer == username[counter] || (buffer == '|' && username[counter] == '\0')) {
+                        check = 1;
+                        //printf("if'in içi\n\n"); //debug
+                        //printf("BUFFER:%c\n",buffer);
+                        if (buffer == '|') {
+                            found = 1;
+                            unamevalid = 1;
+                            //printf("This username already exists please enter a different one!\n");
 
-                        //------------------storing the password of that username
-                        //int holderofi;
-                        buffer= fgetc(Filepointer);
-                        for (int i = 0; buffer!='\n'; ++i)
-                        {
-                            if(buffer==EOF)
-                            {
-                                break;
+                            //------------------storing the password of that username
+                            //int holderofi;
+                            buffer = fgetc(Filepointer);
+                            for (int i = 0; buffer != '\n'; ++i) {
+                                if (buffer == EOF) {
+                                    break;
+                                }
+                                //printf("INSIDE PASS PART\n"); //debug
+                                storedpass[i] = buffer;
+                                buffer = fgetc(Filepointer);
+                                //printf("|press enter to continue..."); //debug
+                                //fflush(stdin);    //debug
+                                //fgets(enter,2,stdin);     //debug
+                                //holderofi=i;
+
+
                             }
-                            //printf("INSIDE PASS PART\n"); //debug
-                            storedpass[i]=buffer;
-                            buffer= fgetc(Filepointer);
-                            //printf("|press enter to continue..."); //debug
-                            //fflush(stdin);    //debug
-                            //fgets(enter,2,stdin);     //debug
-                            //holderofi=i;
+                            // storedpass[holderofi+1]='\0';
+                            //printf("####### %d",storedpass[holderofi+1]);
 
-
+                            //printf("password:%s\n",storedpass);
+                            //printf("|press enter to continue...");
+                            //fflush(stdin);
+                            //fgets(enter,2,stdin);
                         }
-                       // storedpass[holderofi+1]='\0';
-                        //printf("####### %d",storedpass[holderofi+1]);
 
-                        //printf("password:%s\n",storedpass);
+                    } else {
+                        check = 0;
+                    }
+
+                    counter++;
+
+
+                    if (check == 0) {
+                        while (buffer != '|' && buffer != EOF && buffer != '\n') {
+                            buffer = fgetc(Filepointer);
+                            //printf("buffer in while: %c\n", buffer); //debug
+                        }
+                        //printf("everything removed!\n");
+                        counter = 0;
+                    }
+
+
+                    //printf("enter a value to cont."); // debug
+                    //int temp; //debug
+                    //scanf("%d", &temp); //debug
+
+                }
+
+            }
+
+            fclose(Filepointer);
+
+            //#########################################
+
+            //--------------------TAKING INPUT FOR PASSWORD FROM USER------
+
+            printf("Please enter your password its case sensitive\n");
+            scanf("%s", password);
+            //printf("THAT IS THIS: %d\n",storedpass[7]);
+            for (lengthofpass = 0; storedpass[lengthofpass] != '\0'; ++lengthofpass) {
+
+                //printf("PASS: %c\n",storedpass[lengthofpass]);
+                //printf("%d\n",lengthofpass);
+                //printf("|press enter to continue...");
+                //fflush(stdin);
+                //fgets(enter,2,stdin);
+            }
+            int checker = 1;
+            for (int i = 0; i <= lengthofpass && checker == 1; ++i) {
+                //printf("STORED:%c\n",storedpass[i]);
+                //printf("USER:%c\n",password[i]);
+                if (storedpass[i] == password[i]) {
+                    checker = 1;
+                    //printf("BOTH IN:%c\n",password[i]);
+                    if (storedpass[i] == '\0') {
+                        printf("correct password you're in!\n");
+                        passvalid = 1;
                         //printf("|press enter to continue...");
                         //fflush(stdin);
                         //fgets(enter,2,stdin);
+                        break;
                     }
-
                 } else {
-                    check = 0;
-                }
-
-                counter++;
-
-
-                if (check == 0) {
-                    while (buffer != '|' && buffer != EOF && buffer!='\n') {
-                        buffer = fgetc(Filepointer);
-                        //printf("buffer in while: %c\n", buffer); //debug
-                    }
-                    //printf("everything removed!\n");
-                    counter = 0;
+                    checker = 0;
                 }
 
 
-                //printf("enter a value to cont."); // debug
-                //int temp; //debug
-                //scanf("%d", &temp); //debug
+
+                //printf("|press enter to continue...");
+                //fflush(stdin);
+                //fgets(enter,2,stdin);
 
             }
-
-        }
-
-        fclose(Filepointer);
-
-    //#########################################
-
-    //--------------------TAKING INPUT FOR PASSWORD FROM USER------
-
-    printf("Please enter your password its case sensitive\n");
-    scanf("%s",password);
-    //printf("THAT IS THIS: %d\n",storedpass[7]);
-    for (lengthofpass = 0; storedpass[lengthofpass]!='\0'; ++lengthofpass)
-    {
-
-        //printf("PASS: %c\n",storedpass[lengthofpass]);
-        //printf("%d\n",lengthofpass);
-        //printf("|press enter to continue...");
-        //fflush(stdin);
-        //fgets(enter,2,stdin);
-    }
-    int checker=1;
-    for (int i = 0; i <= lengthofpass && checker==1; ++i)
-    {
-        //printf("STORED:%c\n",storedpass[i]);
-        //printf("USER:%c\n",password[i]);
-        if(storedpass[i]==password[i])
-        {
-            checker=1;
-            //printf("BOTH IN:%c\n",password[i]);
-            if(storedpass[i]=='\0')
+            if(unamevalid==0)
             {
-                printf("correct password you're in!\n");
-                printf("|press enter to continue...");
+                printf("There is no such user...\n");
+                printf("|press enter to continue...\n");
                 fflush(stdin);
                 fgets(enter,2,stdin);
-                break;
+            }
+            else
+            {
+                if(passvalid==0)
+                {
+                    printf("You entered a wrong password!\n");
+                    printf("|press enter to continue...\n");
+                    fflush(stdin);
+                    fgets(enter,2,stdin);
+                }
             }
         }
-        else
-        {
-            checker=0;
-        }
-
-
-        //printf("|press enter to continue...");
-        //fflush(stdin);
-        //fgets(enter,2,stdin);
-
-    }
-    printf("|press enter to continue LAST CALL...");
-    fflush(stdin);
-    fgets(enter,2,stdin);
 
 
 }
